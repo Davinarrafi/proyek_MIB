@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCore — Dashboard KPI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-logo">Med<span>Core</span></div>
+    <div class="sidebar-subtitle">RSUD Harapan Sehat</div>
+
+    <div class="nav-label">Menu</div>
+    <button class="nav-item active" onclick="showPage('home', this)">
+        <span class="nav-dot"></span> Beranda / Overview
+    </button>
+
+    <button class="nav-item" onclick="showPage('service', this)">
+        <span class="nav-dot"></span> Kualitas Layanan
+    </button>
+    
+    <button class="nav-item" onclick="showPage('finance', this)">
+        <span class="nav-dot"></span> Keuangan
+    </button>
+
+    <button class="nav-item" onclick="showPage('hr', this)">
+        <span class="nav-dot"></span> Human Resources
+    </button>
+    <div class="sidebar-footer">Periode: Jun 2025</div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+    <!-- ========== PAGE: HOME ========== -->
+    <div class="page active" id="page-home">
+        <div class="page-header">
+            <div class="page-tag">Overview</div>
+            <div class="page-title">Dashboard Fasilitas Kesehatan</div>
+            <div class="page-desc">Ringkasan performa manajemen &amp; klinis — semua KPI utama dalam satu tampilan.</div>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+            <div class="kpi-card blue">
+                <div class="kpi-label">Total Pendapatan</div>
+                <div class="kpi-value">Rp 1,2 M</div>
+                <div class="kpi-sub"><span class="kpi-badge badge-up">+12%</span> dari bulan lalu</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="kpi-label">Bed Occupancy Rate</div>
+                <div class="kpi-value">78%</div>
+                <div class="kpi-sub">Kapasitas Rawat Inap</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="kpi-label">Readmission Rate</div>
+                <div class="kpi-value">5,2%</div>
+                <div class="kpi-sub"><span class="kpi-badge badge-warn">Target &lt;5%</span> dalam 30 hari</div>
+            </div>
+            <div class="kpi-card purple">
+                <div class="kpi-label">Patient Satisfaction</div>
+                <div class="kpi-value">4,5/5</div>
+                <div class="kpi-sub">Berdasarkan survei terakhir</div>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-title">Distribusi Pemasukan</div>
+                <div class="chart-subtitle">Finance — Porsi pendapatan per unit layanan</div>
+                <div class="chart-wrap"><canvas id="h-financeChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Wait Times per Poli</div>
+                <div class="chart-subtitle">Process — Rata-rata waktu tunggu (menit)</div>
+                <div class="chart-wrap"><canvas id="h-waitChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Beban Kerja Staff per Poli</div>
+                <div class="chart-subtitle">Growth — Jumlah pasien per dokter</div>
+                <div class="chart-wrap"><canvas id="h-staffChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Tren Pasien Baru</div>
+                <div class="chart-subtitle">Growth — Jan–Jun 2025</div>
+                <div class="chart-wrap"><canvas id="h-patientChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PAGE: SERVICE QUALITY ========== -->
+    <div class="page" id="page-service">
+        <div class="page-header">
+            <div class="page-tag">KPI Kualitas Layanan</div>
+            <div class="page-title">Kepuasan &amp; Keterjangkauan Pasien</div>
+            <div class="page-desc">Analisis mendalam kepuasan pasien, pasien baru, dan waktu tunggu per poli.</div>
+        </div>
+
+        <!-- INSIGHT -->
+        <div class="insight-card">
+            <div class="insight-label">Analisis Periode Jun 2025</div>
+            <div class="insight-text">
+                Secara keseluruhan, kualitas layanan menunjukkan tren positif. Skor kepuasan pasien mencapai <strong style="color:#fff">4,5 dari 5</strong>, meningkat 0,3 poin dibanding kuartal sebelumnya. Pertumbuhan pasien baru mencapai puncaknya pada bulan Juni dengan <strong style="color:#fff">700 pasien</strong>, didorong oleh kampanye outreach komunitas. Namun, waktu tunggu di Poli Kandungan masih berada di angka <strong style="color:#fff">45 menit</strong>, jauh di atas rata-rata fasilitas sejenis, dan perlu menjadi prioritas perbaikan operasional pada kuartal berikutnya.
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-title">Skor Kepuasan Pasien per Bulan</div>
+                <div class="chart-subtitle">Skala 1–5 berdasarkan survei exit pasien</div>
+                <div class="chart-wrap"><canvas id="s-satisfactionChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Tren Pasien Baru</div>
+                <div class="chart-subtitle">Jumlah pasien baru per bulan, Jan–Jun 2025</div>
+                <div class="chart-wrap"><canvas id="s-newPatientChart"></canvas></div>
+            </div>
+            <div class="chart-card full">
+                <div class="chart-title">Rata-rata Waktu Tunggu per Poli</div>
+                <div class="chart-subtitle">Dalam menit — target internal &lt;30 menit</div>
+                <div class="chart-wrap"><canvas id="s-waitChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- TABLE: Satisfaction -->
+        <div class="table-card">
+            <div class="table-header">
+                <div>
+                    <div class="chart-title">Data Kepuasan Pasien</div>
+                    <div class="chart-subtitle" style="margin:0">Sumber: Survei Exit Pasien, Jan–Jun 2025</div>
+                </div>
+            </div>
+            <hr class="section-divider">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bulan</th>
+                        <th>Responden</th>
+                        <th>Skor Rata-rata</th>
+                        <th>Puas (%)</th>
+                        <th>Tidak Puas (%)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Januari</td><td>312</td><td>4,1</td><td>82%</td><td>18%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Baik</span></td></tr>
+                    <tr><td>Februari</td><td>289</td><td>4,0</td><td>79%</td><td>21%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Baik</span></td></tr>
+                    <tr><td>Maret</td><td>401</td><td>4,2</td><td>84%</td><td>16%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Baik</span></td></tr>
+                    <tr><td>April</td><td>375</td><td>4,3</td><td>86%</td><td>14%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Baik</span></td></tr>
+                    <tr><td>Mei</td><td>450</td><td>4,4</td><td>88%</td><td>12%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Baik</span></td></tr>
+                    <tr><td>Juni</td><td>520</td><td>4,5</td><td>90%</td><td>10%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Sangat Baik</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TABLE: New Patients -->
+        <div class="table-card">
+            <div class="table-header">
+                <div>
+                    <div class="chart-title">Data Pasien Baru</div>
+                    <div class="chart-subtitle" style="margin:0">Sumber: Sistem Rekam Medis, Jan–Jun 2025</div>
+                </div>
+            </div>
+            <hr class="section-divider">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bulan</th>
+                        <th>Pasien Baru</th>
+                        <th>Pasien Lama</th>
+                        <th>Total Kunjungan</th>
+                        <th>Pertumbuhan MoM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Januari</td><td>400</td><td>1.200</td><td>1.600</td><td>—</td></tr>
+                    <tr><td>Februari</td><td>300</td><td>1.100</td><td>1.400</td><td><span class="td-pill" style="background:#FEF2F2;color:#DC2626">-25%</span></td></tr>
+                    <tr><td>Maret</td><td>550</td><td>1.300</td><td>1.850</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">+83%</span></td></tr>
+                    <tr><td>April</td><td>450</td><td>1.250</td><td>1.700</td><td><span class="td-pill" style="background:#FEF2F2;color:#DC2626">-18%</span></td></tr>
+                    <tr><td>Mei</td><td>600</td><td>1.400</td><td>2.000</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">+33%</span></td></tr>
+                    <tr><td>Juni</td><td>700</td><td>1.500</td><td>2.200</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">+17%</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TABLE: Wait Times -->
+        <div class="table-card">
+            <div class="table-header">
+                <div>
+                    <div class="chart-title">Data Waktu Tunggu per Poli</div>
+                    <div class="chart-subtitle" style="margin:0">Rata-rata Juni 2025 — Target: &lt;30 menit</div>
+                </div>
+            </div>
+            <hr class="section-divider">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Poli</th>
+                        <th>Waktu Tunggu (Menit)</th>
+                        <th>Hari Tersibuk</th>
+                        <th>Jumlah Dokter</th>
+                        <th>Status vs Target</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Poli Gigi</td><td>15</td><td>Senin</td><td>3</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Tercapai</span></td></tr>
+                    <tr><td>Poli Anak</td><td>25</td><td>Rabu</td><td>4</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Tercapai</span></td></tr>
+                    <tr><td>Poli Kandungan</td><td>45</td><td>Selasa</td><td>2</td><td><span class="td-pill" style="background:#FEF2F2;color:#DC2626">Melebihi Target</span></td></tr>
+                    <tr><td>Poli Dalam</td><td>30</td><td>Kamis</td><td>5</td><td><span class="td-pill" style="background:#FFFBEB;color:#D97706">Batas Target</span></td></tr>
+                    <tr><td>Poli Mata</td><td>20</td><td>Jumat</td><td>2</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Tercapai</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ========== PAGE: FINANCE ========== -->
+    <div class="page" id="page-finance">
+        <div class="page-header">
+            <div class="page-tag">KPI Keuangan</div>
+            <div class="page-title">Pendapatan &amp; Distribusi Keuangan</div>
+            <div class="page-desc">Analisis distribusi pemasukan dan tren pendapatan bulanan fasilitas.</div>
+        </div>
+
+        <!-- INSIGHT -->
+        <div class="insight-card">
+            <div class="insight-label">Analisis Keuangan — Jun 2025</div>
+            <div class="insight-text">
+                Total pendapatan semester pertama mencapai <strong style="color:#fff">Rp 7,2 Miliar</strong>, tumbuh rata-rata <strong style="color:#fff">12% per bulan</strong>. Unit Rawat Inap menjadi kontributor terbesar dengan porsi <strong style="color:#fff">36%</strong> dari total pemasukan, diikuti Rawat Jalan sebesar 29%. Penurunan signifikan terjadi pada bulan Februari akibat libur panjang nasional, namun segera terpulihkan pada Maret. Pendapatan dari layanan farmasi menunjukkan pertumbuhan konsisten seiring peningkatan volume kunjungan, dan diproyeksikan melampaui target tahunan jika tren ini berlanjut.
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-title">Distribusi Pemasukan</div>
+                <div class="chart-subtitle">Porsi pendapatan per unit layanan — Jun 2025</div>
+                <div class="chart-wrap"><canvas id="f-pieChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Pendapatan Bulanan</div>
+                <div class="chart-subtitle">Total pendapatan dalam juta Rupiah, Jan–Jun 2025</div>
+                <div class="chart-wrap"><canvas id="f-revenueChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- TABLE: Income Distribution -->
+        <div class="table-card">
+            <div class="table-header">
+                <div>
+                    <div class="chart-title">Detail Distribusi Pemasukan</div>
+                    <div class="chart-subtitle" style="margin:0">Sumber: Laporan Keuangan Internal, Jun 2025</div>
+                </div>
+            </div>
+            <hr class="section-divider">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Unit Layanan</th>
+                        <th>Pendapatan (Juta)</th>
+                        <th>Porsi (%)</th>
+                        <th>Target Bulanan</th>
+                        <th>Pencapaian Target</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Rawat Jalan</td><td>Rp 350</td><td>29%</td><td>Rp 320</td><td>109%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Tercapai</span></td></tr>
+                    <tr><td>Rawat Inap</td><td>Rp 432</td><td>36%</td><td>Rp 400</td><td>108%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Tercapai</span></td></tr>
+                    <tr><td>Farmasi / Obat</td><td>Rp 264</td><td>22%</td><td>Rp 250</td><td>106%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Tercapai</span></td></tr>
+                    <tr><td>Layanan Loket &amp; Lain</td><td>Rp 154</td><td>13%</td><td>Rp 180</td><td>86%</td><td><span class="td-pill" style="background:#FEF2F2;color:#DC2626">Belum Tercapai</span></td></tr>
+                    <tr style="font-weight:600"><td>Total</td><td>Rp 1.200</td><td>100%</td><td>Rp 1.150</td><td>104%</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">Tercapai</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TABLE: Monthly Revenue -->
+        <div class="table-card">
+            <div class="table-header">
+                <div>
+                    <div class="chart-title">Pendapatan Bulanan — Jan s/d Jun 2025</div>
+                    <div class="chart-subtitle" style="margin:0">Sumber: Laporan Keuangan, dalam Juta Rupiah</div>
+                </div>
+            </div>
+            <hr class="section-divider">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bulan</th>
+                        <th>Rawat Jalan</th>
+                        <th>Rawat Inap</th>
+                        <th>Farmasi</th>
+                        <th>Loket &amp; Lain</th>
+                        <th>Total</th>
+                        <th>Pertumbuhan MoM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Januari</td><td>280</td><td>350</td><td>190</td><td>120</td><td>940</td><td>—</td></tr>
+                    <tr><td>Februari</td><td>220</td><td>310</td><td>165</td><td>100</td><td>795</td><td><span class="td-pill" style="background:#FEF2F2;color:#DC2626">-15%</span></td></tr>
+                    <tr><td>Maret</td><td>310</td><td>390</td><td>210</td><td>130</td><td>1.040</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">+31%</span></td></tr>
+                    <tr><td>April</td><td>320</td><td>400</td><td>225</td><td>140</td><td>1.085</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">+4%</span></td></tr>
+                    <tr><td>Mei</td><td>335</td><td>415</td><td>248</td><td>152</td><td>1.150</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">+6%</span></td></tr>
+                    <tr><td>Juni</td><td>350</td><td>432</td><td>264</td><td>154</td><td>1.200</td><td><span class="td-pill" style="background:#ECFDF5;color:#059669">+4%</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ========== PAGE: HR ========== -->
+    <div class="page" id="page-hr">
+        <div class="page-header">
+            <div class="page-tag">KPI Human Resources</div>
+            <div class="page-title">Sumber Daya Manusia</div>
+            <div class="page-desc">Distribusi beban kerja staf medis berdasarkan jumlah pasien yang ditangani.</div>
+        </div>
+    
+        <div class="chart-grid">
+            <div class="chart-card full">
+                <div class="chart-title">Jumlah Pasien per Staf Medis</div>
+                <div class="chart-subtitle">Rata-rata pasien yang ditangani per staf — Juni 2025</div>
+                <div class="chart-wrap"><canvas id="hr-staffPatientChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
