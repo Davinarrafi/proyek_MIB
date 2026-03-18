@@ -12,6 +12,20 @@
 </head>
 <body>
 
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay" style="display:none; position:fixed; inset:0; background:rgba(26,31,46,0.85); z-index:999; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:16px; padding:40px; width:360px; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:4px;">Med<span style="color:#4F7EF7">Core</span></div>
+    <div style="font-size:12px; color:#8A909E; margin-bottom:28px; text-transform:uppercase; letter-spacing:1.5px;">Admin Login</div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <input id="loginUsername" type="text" placeholder="Username" style="border:1px solid #E8E6E0; border-radius:8px; padding:10px 14px; font-size:13px; font-family:'DM Sans',sans-serif; outline:none;" />
+      <input id="loginPassword" type="password" placeholder="Password" style="border:1px solid #E8E6E0; border-radius:8px; padding:10px 14px; font-size:13px; font-family:'DM Sans',sans-serif; outline:none;" />
+      <div id="loginError" style="color:#DC2626; font-size:12px; display:none;">Username atau password salah.</div>
+      <button onclick="submitLogin()" style="background:#4F7EF7; color:#fff; border:none; border-radius:10px; padding:12px; font-size:14px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;">Masuk</button>
+    </div>
+  </div>
+</div>
+    
 <!-- SIDEBAR -->
 <aside class="sidebar">
     <div class="sidebar-logo">Med<span>Core</span></div>
@@ -45,6 +59,9 @@
     <button class="nav-item" onclick="showPage('input', this)">
         <span class="nav-dot"></span> Input Data
     </button>
+
+    <button class="nav-item" id="loginBtn" onclick="showLoginOverlay()"><span class="nav-dot"></span> Login Admin</button>
+    <button class="nav-item" id="logoutBtn" style="display:none;" onclick="doLogout()"><span class="nav-dot"></span> Logout</button>
 
     <div class="sidebar-footer">RSUD Harapan Sehat © 2025</div>
 </aside>
