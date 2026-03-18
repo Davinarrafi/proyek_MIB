@@ -37,7 +37,16 @@
     <button class="nav-item" onclick="showPage('readmission', this)">
         <span class="nav-dot"></span> Readmission Rate
     </button>
-    <div class="sidebar-footer">Periode: Jun 2025</div>
+
+    <button class="nav-item" onclick="showPage('efficiency', this)">
+        <span class="nav-dot"></span> Efisiensi Operasional
+    </button>
+
+    <button class="nav-item" onclick="showPage('input', this)">
+        <span class="nav-dot"></span> Input Data
+    </button>
+
+    <div class="sidebar-footer">RSUD Harapan Sehat © 2025</div>
 </aside>
 
 <!-- MAIN CONTENT -->
@@ -112,7 +121,10 @@
         <div class="insight-card">
             <div class="insight-label">Analisis Periode Jun 2025</div>
             <div class="insight-text">
-                Secara keseluruhan, kualitas layanan menunjukkan tren positif. Skor kepuasan pasien mencapai <strong style="color:#fff">4,5 dari 5</strong>, meningkat 0,3 poin dibanding kuartal sebelumnya. Pertumbuhan pasien baru mencapai puncaknya pada bulan Juni dengan <strong style="color:#fff">700 pasien</strong>, didorong oleh kampanye outreach komunitas. Namun, waktu tunggu di Poli Kandungan masih berada di angka <strong style="color:#fff">45 menit</strong>, jauh di atas rata-rata fasilitas sejenis, dan perlu menjadi prioritas perbaikan operasional pada kuartal berikutnya.
+                Secara keseluruhan, kualitas layanan menunjukkan tren positif. 
+                Skor kepuasan pasien mencapai <strong style="color:#fff">4,5 dari 5</strong>, meningkat 0,3 poin dibanding kuartal sebelumnya. 
+                Pertumbuhan pasien baru mencapai puncaknya pada bulan Juni dengan <strong style="color:#fff">700 pasien</strong>, didorong oleh kampanye outreach komunitas. 
+                Namun, waktu tunggu di Poli Kandungan masih berada di angka <strong style="color:#fff">45 menit</strong>, jauh di atas rata-rata fasilitas sejenis, dan perlu menjadi prioritas perbaikan operasional pada kuartal berikutnya.
             </div>
         </div>
 
@@ -447,6 +459,255 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+                EFISIENSI OPERASIONAL
+    ════════════════════════════════════════ -->
+    <div class="page" id="page-efficiency">
+        <div class="page-header">
+            <div class="page-tag">KPI Efisiensi Operasional</div>
+            <div class="page-title">Bed Occupancy &amp; Length of Stay</div>
+            <div class="page-desc">Analisis utilisasi tempat tidur dan durasi rawat inap per bangsal.</div>
+        </div>
+    
+        <!-- Filter -->
+        <div class="filter-bar">
+            <label>Filter:</label>
+            <select class="filter-select" id="eff-filter-month" onchange="renderEfficiencyPage()">
+                <option value="all">Semua Bulan</option>
+                <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+            </select>
+            <div class="filter-divider"></div>
+            <select class="filter-select" id="eff-filter-ward" onchange="renderEfficiencyPage()">
+                <option value="all">Semua Bangsal</option>
+                <option value="ICU / Intensif">ICU / Intensif</option>
+                <option value="Bangsal Mawar (VIP)">Bangsal Mawar (VIP)</option>
+                <option value="Bangsal Melati (Kelas 1)">Bangsal Melati (Kelas 1)</option>
+                <option value="Bangsal Anggrek (Kelas 2)">Bangsal Anggrek (Kelas 2)</option>
+                <option value="Bangsal Dahlia (Kelas 3)">Bangsal Dahlia (Kelas 3)</option>
+                <option value="Perinatologi / Neonatus">Perinatologi / Neonatus</option>
+            </select>
+            <div class="filter-divider"></div>
+            <span class="filter-badge" id="eff-data-badge">● Live + Baseline</span>
+        </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card green"><div class="kpi-label">Bed Occupancy Rate (BOR)</div><div class="kpi-value" id="eff-bor">—%</div><div class="kpi-sub" id="eff-bor-sub">Memuat...</div></div>
+                <div class="kpi-card blue"><div class="kpi-label">Avg. Length of Stay (ALOS)</div><div class="kpi-value" id="eff-alos">— hari</div><div class="kpi-sub" id="eff-alos-sub">Memuat...</div></div>
+                <div class="kpi-card yellow"><div class="kpi-label">Total Pasien Rawat Inap</div><div class="kpi-value" id="eff-patients">—</div><div class="kpi-sub" id="eff-patients-sub">Memuat...</div></div>
+                <div class="kpi-card red"><div class="kpi-label">Turn Over Interval (TOI)</div><div class="kpi-value" id="eff-toi">— hari</div><div class="kpi-sub">Estimasi dari ALOS &amp; BOR</div></div>
+            </div>
+
+            <div class="insight-card">
+                <div class="insight-label">Analisis Efisiensi Operasional</div>
+                <div class="insight-text" id="eff-insight-text">Memuat analisis...</div>
+            </div>
+            <div class="chart-grid">
+                <div class="chart-card"><div class="chart-title">Tren BOR Bulanan</div><div class="chart-subtitle">Persentase hunian tempat tidur per bulan</div><div class="chart-wrap"><canvas id="e-borTrendChart"></canvas></div></div>
+                <div class="chart-card"><div class="chart-title">BOR per Bangsal</div><div class="chart-subtitle">Utilisasi per unit bangsal</div><div class="chart-wrap"><canvas id="e-borWardChart"></canvas></div></div>
+                <div class="chart-card"><div class="chart-title">Tren ALOS Bulanan</div><div class="chart-subtitle">Rata-rata durasi rawat inap (hari) per bulan</div><div class="chart-wrap"><canvas id="e-alosTrendChart"></canvas></div></div>
+                <div class="chart-card"><div class="chart-title">ALOS per Bangsal</div><div class="chart-subtitle">Rata-rata hari rawat inap vs target 4 hari</div><div class="chart-wrap"><canvas id="e-alosWardChart"></canvas></div></div>
+            </div>
+            <div class="table-card">
+                <div class="table-header"><div><div class="chart-title">Detail BOR per Bangsal</div><div class="chart-subtitle" style="margin:0">Kapasitas hardcode — Rentang ideal BOR: 75–85%</div></div></div>
+                <hr class="section-divider">
+                <table><thead><tr><th>Bangsal</th><th>Kapasitas TT</th><th>TT Terisi</th><th>BOR (%)</th><th>Sumber</th><th>Status</th></tr></thead>
+                <tbody id="eff-bor-tbody"></tbody></table>
+            </div>
+            <div class="table-card">
+                <div class="table-header"><div><div class="chart-title">Detail ALOS per Bangsal</div><div class="chart-subtitle" style="margin:0">Target ALOS: &lt;4 hari</div></div></div>
+                <hr class="section-divider">
+                <table><thead><tr><th>Bangsal</th><th>ALOS (Hari)</th><th>Pasien Keluar</th><th>Sumber</th><th>Status vs Target</th></tr></thead>
+                <tbody id="eff-alos-tbody"></tbody></table>
+            </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+                        INPUT DATA
+    ════════════════════════════════════════ -->
+    <div class="page" id="page-input">
+        <div class="page-header">
+            <div class="page-tag">Manajemen Data</div>
+            <div class="page-title">Input Data Kesehatan</div>
+            <div class="page-desc">Catat data operasional, klinis, layanan, dan keuangan fasilitas secara berkala.</div>
+        </div>
+
+        <div class="status-banner banner-success" id="saveIndicator">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Data berhasil disimpan &amp; dashboard diperbarui.
+        </div>
+        <div class="status-banner banner-edit" id="editBanner">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Mode edit aktif — perubahan akan memperbarui entri yang dipilih.
+        </div>
+
+        <form id="healthForm" onsubmit="handleSubmit(event)">
+
+            <!-- Data Pasien -->
+            <div class="form-section">
+                <div class="form-section-title">Data Pasien</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nama Pasien</label>
+                        <span class="form-hint">Nama lengkap sesuai rekam medis</span>
+                        <input type="text" id="patientName" class="form-input" placeholder="Cth: Budi Santoso" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nomor Rekam Medis</label>
+                        <span class="form-hint">ID unik pasien di sistem</span>
+                        <input type="text" id="patientId" class="form-input" placeholder="Cth: RM-2025-00142" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operasional & Rawat Inap -->
+            <div class="form-section">
+                <div class="form-section-title">Operasional &amp; Rawat Inap</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Bangsal</label>
+                        <span class="form-hint">Unit bangsal perawatan</span>
+                        <select id="ward" class="form-input">
+                            <option value="">— Pilih Bangsal —</option>
+                            <option>ICU / Intensif</option>
+                            <option>Bangsal Mawar (VIP)</option>
+                            <option>Bangsal Melati (Kelas 1)</option>
+                            <option>Bangsal Anggrek (Kelas 2)</option>
+                            <option>Bangsal Dahlia (Kelas 3)</option>
+                            <option>Perinatologi / Neonatus</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Jenis Layanan / Poli</label>
+                        <span class="form-hint">Unit layanan yang dikunjungi</span>
+                        <select id="serviceType" class="form-input">
+                            <option value="">— Pilih Layanan —</option>
+                            <option>Poli Gigi</option>
+                            <option>Poli Anak</option>
+                            <option>Poli Kandungan</option>
+                            <option>Poli Dalam</option>
+                            <option>Poli Mata</option>
+                            <option>Rawat Inap</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Mulai Rawat Inap</label>
+                        <span class="form-hint">Operasional &amp; klinis</span>
+                        <input type="date" id="admissionDate" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Selesai Rawat Inap</label>
+                        <span class="form-hint">Operasional &amp; klinis</span>
+                        <input type="date" id="dischargeDate" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Durasi Inap (hari)</label>
+                        <span class="form-hint">Dihitung otomatis</span>
+                        <input type="number" id="lengthOfStay" class="form-input" placeholder="Otomatis" readonly />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layanan & Kunjungan -->
+            <div class="form-section">
+                <div class="form-section-title">Layanan &amp; Kunjungan Pasien</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Kunjungan</label>
+                        <span class="form-hint">Untuk rawat jalan</span>
+                        <input type="date" id="visitDate" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu Registrasi</label>
+                        <span class="form-hint">Jam check-in pasien</span>
+                        <input type="time" id="registrationTime" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu Pemanggilan</label>
+                        <span class="form-hint">Jam pasien dipanggil dokter</span>
+                        <input type="time" id="callTime" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu Tunggu (menit)</label>
+                        <span class="form-hint">Dihitung otomatis dari registrasi &amp; pemanggilan</span>
+                        <input type="number" id="waitTime" class="form-input" placeholder="Otomatis" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skor Kepuasan (0–5)</label>
+                        <span class="form-hint">Survei exit pasien</span>
+                        <input type="number" id="satisfactionScore" step="0.1" min="0" max="5" class="form-input" placeholder="Cth: 4.5" />
+                    </div>
+                </div>
+                <div class="checkbox-row" style="margin-top:12px">
+                    <input type="checkbox" id="isFirstVisit" />
+                    <label for="isFirstVisit">Kunjungan pertama (pasien baru)</label>
+                </div>
+            </div>
+
+            <!-- Keuangan -->
+            <div class="form-section">
+            <div class="form-section-title">Keuangan</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Tanggal Transaksi</label>
+                    <span class="form-hint">Tanggal pemasukan / pengeluaran</span>
+                    <input type="date" id="financeDate" class="form-input" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Jenis Transaksi</label>
+                    <span class="form-hint">Pemasukan atau pengeluaran</span>
+                    <select id="financeType" class="form-input">
+                        <option value="">— Pilih Jenis —</option>
+                        <option value="Pemasukan">Pemasukan</option>
+                        <option value="Pengeluaran">Pengeluaran</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Unit / Kategori</label>
+                    <span class="form-hint">Sumber pendapatan atau kategori biaya</span>
+                    <select id="financeUnit" class="form-input">
+                        <option value="">— Pilih Unit —</option>
+                        <option value="Rawat Jalan">Rawat Jalan</option>
+                        <option value="Rawat Inap">Rawat Inap</option>
+                        <option value="Farmasi">Farmasi</option>
+                        <option value="Loket & Lain">Loket &amp; Lain</option>
+                    </select>
+                </div>
+                    <div class="form-group">
+                        <label class="form-label">Jumlah (Rp)</label>
+                        <span class="form-hint">Nominal dalam Rupiah</span>
+                        <input type="number" id="financeAmount" min="0" class="form-input" placeholder="Cth: 1500000" />
+                    </div>
+                    <div class="form-group span2">
+                        <label class="form-label">Keterangan</label>
+                        <span class="form-hint">Sumber atau tujuan — gaji, obat, rawat inap, dll</span>
+                        <input type="text" id="financeNote" class="form-input" placeholder="Cth: Pembayaran rawat inap, gaji dokter spesialis..." />
+                    </div>
+                </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h11a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                    Simpan Data
+                </button>
+            </form>
+
+            <!-- Histori -->
+            <div class="table-card" style="margin-top:32px">
+                <div class="table-header">
+                    <div><div class="chart-title">Histori Data Tersimpan</div><div class="chart-subtitle" style="margin:0">Disimpan di browser lokal</div></div>
+                    <button class="clear-btn" onclick="clearAll()">Hapus Semua</button>
+                </div>
+                <hr class="section-divider">
+                <div style="overflow-x:auto">
+                <table>
+                    <thead><tr><th>#</th><th>Nama Pasien</th><th>No.RM</th><th>Bangsal</th><th>Poli/Layanan</th><th>Tgl Masuk</th><th>Tgl Keluar</th><th>Durasi</th><th>Tunggu</th><th>Kepuasan</th><th>Transaksi</th><th>Aksi</th></tr></thead>
+                    <tbody id="historyTableBody"><tr><td colspan="12" class="history-empty">Belum ada data tersimpan.</td></tr></tbody>
+                </table>
+                </div>
+            </div>
     </div>
 </main>
 
