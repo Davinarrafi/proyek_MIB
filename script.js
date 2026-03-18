@@ -580,16 +580,42 @@ function resetForm(){
     if(btn)btn.innerHTML='<svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h11a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg> Simpan Data';
 }
 function handleSubmit(e){
-    e.preventDefault();
-    const fields=['patientName','patientId','ward','admissionDate','dischargeDate','lengthOfStay','serviceType','visitDate','registrationTime','callTime','waitTime','satisfactionScore','financeDate','financeType','financeUnit','financeAmount','financeNote'];
-    const data=Object.fromEntries(fields.map(id=>{const el=document.getElementById(id);return[id,el?(el.value?.trim?el.value.trim():el.value):''];}));
-    data.isFirstVisit=document.getElementById('isFirstVisit')?.checked||false;
-    const h=getData();
-    if(editingIndex!==null){h[editingIndex]=data;editingIndex=null;}else{h.push(data);}
-    saveAll(h);resetForm();
-    const si=document.getElementById('saveIndicator');
-    if(si){si.classList.add('show');setTimeout(()=>si.classList.remove('show'),3000);}
-    renderHistory();refreshAllPages();
+  e.preventDefault();
+  const fields = ['patientName','patientId','ward','admissionDate','dischargeDate','lengthOfStay',
+                  'serviceType','visitDate','registrationTime','callTime','waitTime','satisfactionScore',
+                  'financeDate','financeType','financeUnit','financeAmount','financeNote'];
+  const data = Object.fromEntries(fields.map(id => {
+    const el = document.getElementById(id);
+    return [id, el ? (el.value.trim ? el.value.trim() : el.value) : ''];
+  }));
+  data.isFirstVisit = document.getElementById('isFirstVisit').checked;
+  data.createdAt = new Date().toISOString();
+
+  // Save to localStorage (existing behaviour)
+  const h = getData();
+  if (editingIndex!==null) { h[editingIndex]=data; editingIndex=null; } else { h.push(data); }
+  saveAll(h);
+
+  // Send to MongoDB via Express server
+  try {
+    const res = await fetch('http://localhost:3000/insert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Server error');
+    console.log('MongoDB insert success:', result.id);
+  } catch (err) {
+    console.error('MongoDB error:', err.message);
+    alert('⚠️ Data tersimpan lokal, tapi gagal kirim ke server:\n' + err.message);
+  }
+
+  resetForm();
+  document.getElementById('saveIndicator').classList.add('show');
+  setTimeout(()=>document.getElementById('saveIndicator').classList.remove('show'),3000);
+  renderHistory();
+  refreshAllPages();
 }
 
 // ══════════════════════════════════════════════════════════════
